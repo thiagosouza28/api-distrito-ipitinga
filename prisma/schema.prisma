@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model dadosbancarios {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  tipodechave   String
+  chavepix      String
+  nometitular   String
+  bancotitular  String
+  qrcode        String
+}
+
+
+model eventos {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  nomedoevento       String
+  iniciodainscricao  DateTime
+  finaldainscricao   DateTime
+  valordainscricao   Float
+}
+
+model usuarios {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  nomecompleto String
+  datanasc    DateTime
+  email       String @unique 
+  cargo       String
+  distrito    String
+  igreja      String
+  password    String
+}
+
+model participantes {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  cpf            String
+  fotoparticipante String?
+  nomecompleto   String
+  datanasc      DateTime
+  idade          Int 
+  distrito       String
+  igreja         String
+  comprovantepag String?
+  confpagamento  Boolean   @default(false)
+  datainscricao  DateTime @default(now())
+}
