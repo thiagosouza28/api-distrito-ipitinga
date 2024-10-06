@@ -103,25 +103,39 @@ router.post('/cadastro-usuarios', async (req, res) => {
 
 
 // Rota para cadastro de participantes
-router.post('/cadastro-participante', async (req, res) => {
+router.post('/cadastro-participantes', async (req, res) => {
     try {
-        const { cpf, fotoparticipante, nomecompleto, datanasc, idade, distrito, igreja, comprovantepag, confpagamento } = req.body;
-        
-        // Data da inscrição é gerada automaticamente
-        const datainscricao = new Date();
+        const { cpf, nomecompleto, datanasc, distrito, igreja, confpagamento, datainscricao } = req.body;
+        const fotoparticipante = req.files.fotoparticipante;
+        const comprovantepag = req.files.comprovantepag;
 
+        // Verificar se os arquivos foram enviados
+        if (!fotoparticipante || !comprovantepag) {
+            return res.status(400).json({ message: 'Fotos e comprovante são obrigatórios' });
+        }
+
+        // Data da inscrição é gerada automaticamente
         const participantDB = await prisma.participantes.create({
             data: {
                 cpf,
-                fotoparticipante,
+                fotoparticipante: {
+                    create: {
+                        filename: fotoparticipante.filename,
+                        path: fotoparticipante.path,
+                    },
+                },
                 nomecompleto,
                 datanasc: new Date(datanasc), // Formato esperado: YYYY-MM-DD
-                idade,
                 distrito,
                 igreja,
-                comprovantepag,
+                comprovantepag: {
+                    create: {
+                        filename: comprovantepag.filename,
+                        path: comprovantepag.path,
+                    },
+                },
                 confpagamento,
-                datainscricao,
+                datainscricao: new Date(datainscricao),
             },
         });
 
